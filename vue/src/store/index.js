@@ -3,11 +3,13 @@ import axiosClient from "../axios";
 
 
 const store = createStore({
+    getters: {},
     state: {
         user: {
             data: {},
             token: sessionStorage.getItem('TOKEN')
         },
+        questionTypes: ['text', 'select', 'radio', 'checkbox'],
         surveys: [
             {
                 id: 1,
@@ -18,7 +20,7 @@ const store = createStore({
                 description: `Laravel is a web application framework with expressive, elegant syntax. We’ve already laid the foundation — freeing you to create without sweating the small things.`,
                 created_at: "2021-12-20 18:00:00",
                 updated_at: "2021-12-20 18:00:00",
-                expire_date: "2021-12-31 18:00:00",
+                expire_date: "2021-12-31",
                 questions: [
                     {
                         id: 1,
@@ -120,7 +122,7 @@ const store = createStore({
                 description: `Vue (pronounced /vjuː/, like view) is a progressive framework for building user interfaces. Unlike other monolithic frameworks, Vue is designed from the ground up to be incrementally adoptable.`,
                 created_at: "2021-12-21 17:00:00",
                 updated_at: "2021-12-21 17:00:00",
-                expire_date: "2021-12-31 00:00:00",
+                expire_date: "2021-12-31",
                 questions: [{
                     question: 'aaxaspc cmscpms',
                     description: 'opis nekog pitanja vzbv'
@@ -140,7 +142,6 @@ const store = createStore({
             },
         ],
     },
-    getters: {},
     actions: {
         register({commit}, user) {
             // return fetch('http://localhost:8000/api/register', {

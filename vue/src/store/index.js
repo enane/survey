@@ -1,9 +1,6 @@
 import {createStore} from "vuex";
 import axiosClient from "../axios";
 
-const surveys = [
-
-];
 
 const store = createStore({
     state: {
@@ -22,6 +19,97 @@ const store = createStore({
                 created_at: "2021-12-20 18:00:00",
                 updated_at: "2021-12-20 18:00:00",
                 expire_date: "2021-12-31 18:00:00",
+                questions: [
+                    {
+                        id: 1,
+                        type: 'select',
+                        question: 'From which country are you?',
+                        description: null,
+                        data: {
+                            options: [
+                                {uuid: 'f8af96f2-1d80-4632-9e9e-b560670e52ea', text: 'USA'},
+                                {uuid: '201c1ff5-23c9-42f9-bfb5-bbc850536440', text: 'Georgia'},
+                                {uuid: 'b5c09733-a49e-460a-ba8a-526863010729', text: 'Germany'},
+                                {uuid: '2abf1cee-f5fb-427c-a220-b5d159ad6513', text: 'India'},
+                                {uuid: '8d14341b-ec2b-4924-9aea-bda6a53b51fc', text: 'United Kingdom'},
+                            ]
+                        },
+                    },
+                    {
+                        id: 2,
+                        type: 'checkbox',
+                        question: 'Which language videos do you want to see on my channel?',
+                        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda cumque earum eos esse est ex facilis, iure laboriosam maiores neque nesciunt nulla placeat praesentium quae quos ratione, recusandae totam velit!',
+                        data: {
+                            options: [
+                                {uuid: 'f8af96f2-1d80-4632-9e9e-b560670e52ea', text: 'JavaScript'},
+                                {uuid: '201c1ff5-23c9-42f9-bfb5-bbc850536440', text: 'PHP'},
+                                {uuid: 'b5c09733-a49e-460a-ba8a-526863010729', text: 'HTML + CSS'},
+                                {uuid: 'b5c09733-a49e-460a-ba8a-526863010729', text: 'All of the above'},
+                                {
+                                    uuid: '2abf1cee-f5fb-427c-a220-b5d159ad6513',
+                                    text: 'Everything Zura thinks will be good'
+                                },
+                            ]
+                        },
+                    },
+                    {
+                        id: 3,
+                        type: 'checkbox',
+                        question: 'Which PHP framework videos do you want to see on my channel?',
+                        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda cumque earum eos esse est ex facilis, iure laboriosam maiores neque nesciunt nulla placeat praesentium quae quos ratione, recusandae totam velit!',
+                        data: {
+                            options: [
+                                {uuid: 'f8af96f2-1d80-4632-9e9e-b560670e52ea', text: 'Laravel'},
+                                {uuid: '201c1ff5-23c9-42f9-bfb5-bbc850536440', text: 'Yii2'},
+                                {uuid: 'b5c09733-a49e-460a-ba8a-526863010729', text: 'Codeigniter'},
+                                {uuid: '2abf1cee-f5fb-427c-a220-b5d159ad6513', text: 'Symfony'},
+                            ]
+                        },
+                    },
+                    {
+                        id: 4,
+                        type: 'radio',
+                        question: 'Which Laravel Framework do you love most?',
+                        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda cumque earum eos esse est ex facilis, iure laboriosam maiores neque nesciunt nulla placeat praesentium quae quos ratione, recusandae totam velit!',
+                        data: {
+                            options: [
+                                {uuid: '31132230-29e0-4857-84ed-417542c7c8dd', text: 'Laravel 5'},
+                                {uuid: '0ab85f86-15ee-4ec0-ba42-793daf243a5d', text: 'Laravel 6'},
+                                {uuid: '748fd679-d983-4d73-8d7b-7bb4abd22254', text: 'Laravel 7'},
+                                {uuid: 'f1864724-1009-4bed-94a1-3cfe93dfb82a', text: 'Laravel 8'},
+                            ]
+                        },
+                    },
+                    {
+                        id: 5,
+                        type: 'checkbox',
+                        question: 'What type of projects do you want to see on my channel built with Laravel?',
+                        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda cumque earum eos esse est ex facilis, iure laboriosam maiores neque nesciunt nulla placeat praesentium quae quos ratione, recusandae totam velit!',
+                        data: {
+                            options: [
+                                {uuid: 'f8af96f2-1d80-4632-9e9e-b560670e52ea', text: 'REST API'},
+                                {uuid: '201c1ff5-23c9-42f9-bfb5-bbc850536440', text: 'E-commerce'},
+                                {uuid: 'b5c09733-a49e-460a-ba8a-526863010729', text: 'Real Estate'},
+                                {uuid: '2abf1cee-f5fb-427c-a220-b5d159ad6513', text: 'All of the above'},
+                            ]
+                        },
+                    },
+                    {
+                        id: 6,
+                        type: 'text',
+                        question: 'What\'s your favourite YouTube channel?',
+                        description: null,
+                        data: null
+                    },
+                    {
+                        id: 7,
+                        type: 'textarea',
+                        question: 'What do you think about TheCodeholic channel?',
+                        description: 'Write your honest opinion. Everything is anonymous.',
+                        data: null
+                    },
+                ]
             },
             {
                 id: 2,
@@ -33,6 +121,10 @@ const store = createStore({
                 created_at: "2021-12-21 17:00:00",
                 updated_at: "2021-12-21 17:00:00",
                 expire_date: "2021-12-31 00:00:00",
+                questions: [{
+                    question: 'aaxaspc cmscpms',
+                    description: 'opis nekog pitanja vzbv'
+                }]
             },
             {
                 id: 3,
@@ -44,12 +136,13 @@ const store = createStore({
                 created_at: "2021-12-21 14:00:00",
                 updated_at: "2021-12-21 14:00:00",
                 expire_date: "2021-12-31 00:00:00",
+                questions: [{}]
             },
         ],
     },
     getters: {},
     actions: {
-        register({ commit }, user){
+        register({commit}, user) {
             // return fetch('http://localhost:8000/api/register', {
             //     headers: {
             //         "Content-Type": "application/json",
@@ -69,29 +162,29 @@ const store = createStore({
                     return data;
                 })
         },
-        login({ commit }, user){
+        login({commit}, user) {
             return axiosClient.post('/login', user)
                 .then(({data}) => {
                     commit('setUser', data);
                     return data;
                 })
-        //     return fetch('http://localhost:8000/api/register', {
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             Accept: "application/json"
-        //         },
-        //         method: "POST",
-        //         body: JSON.stringify(user)
-        //     })
-        //         .then((res)=>res.json())
-        //         .then((res)=>{
-        //             commit("setUser", res);
-        //             return res;
-        //         });
+            //     return fetch('http://localhost:8000/api/register', {
+            //         headers: {
+            //             "Content-Type": "application/json",
+            //             Accept: "application/json"
+            //         },
+            //         method: "POST",
+            //         body: JSON.stringify(user)
+            //     })
+            //         .then((res)=>res.json())
+            //         .then((res)=>{
+            //             commit("setUser", res);
+            //             return res;
+            //         });
         },
         logout({commit}) {
             return axiosClient.post('/logout')
-                .then(res=>{
+                .then(res => {
                     commit('logout');
                     return res;
                 })

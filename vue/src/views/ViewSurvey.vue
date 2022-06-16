@@ -25,39 +25,77 @@
                                 <div>
                                     <label for="about" class="block text-sm font-medium text-gray-700"> Title </label>
                                     <div class="mt-1">
-                                        <p v-if="model.title">{{ model.title }}</p>
-                                        <input v-else id="title" name="title"
-                                                  class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md h-8"
-                                                  placeholder="Survey Title"/>
+                                        <input v-model="model.title"
+                                               id="title" name="title"
+                                               class="p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md h-8"
+                                               placeholder="Survey Title"/>
                                     </div>
                                 </div>
                                 <div>
-                                    <label for="about" class="block text-sm font-medium text-gray-700"> Expire date </label>
+                                    <label for="about" class="block text-sm font-medium text-gray-700"> Expire
+                                        date </label>
                                     <div class="mt-1">
-                                        <p v-if="model.expire_date">{{ model.expire_date }}</p>
-                                        <input v-else id="expire_date" name="expire_date" type="date"
-                                                  class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md h-8"
-                                                  placeholder="Expire date"/>
+                                        <input v-model="model.expire_date" id="expire_date" name="expire_date"
+                                               type="date"
+                                               class="p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md h-8"
+                                               placeholder="Expire date"/>
                                     </div>
                                 </div>
                                 <div>
-                                    <label for="image" class="block text-sm font-medium text-gray-700"> Image </label>
-                                    <div class="mt-1">
-                                        <img v-if="model.image" :src="model.image" :alt="model.title">
-                                        <input v-else id="image" name="image"
-                                                type="file"
-                                                  class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
-                                                  placeholder="Brief description for your survey."/>
-                                    </div>
-                                </div>
+                                    <label class="block text-sm font-medium text-gray-700"> Photo </label>
+                                    <div class="mt-1 flex items-center">
 
+                                        <span class="inline-block w-25 rounded-md overflow-hidden bg-gray-100">
+                                        <img v-if="model.image"
+                                             :src="model.image"
+                                             :alt="model.title">
+                                          <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                              <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                        </span>
+                                        <input type="file" class="mx-3"/>
+
+                                    </div>
+                                </div>
                                 <div>
                                     <label for="about" class="block text-sm font-medium text-gray-700"> About </label>
                                     <div class="mt-1">
-                                        <p v-if="model.description">{{ model.description }}</p>
-                                        <textarea v-else id="about" name="about" rows="3"
-                                                  class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
-                                        placeholder="Brief description for your survey."/>
+                                        <textarea v-model="model.description" id="about" name="about" rows="3"
+                                                  class="p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+                                                  placeholder="Brief description for your survey."/>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="flex items-center h-5">
+                                        <input type="checkbox" name="status" id="status" v-model="model.status">
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label for="status" class="font-medium text-gray-700">
+                                            Active
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+                                    <h3 class="text-2xl flex items-center justify-between">Questions
+                                    <button type="button" class="text-sm bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-800" @click="addQuestion()">
+                                        + Add Question
+                                    </button>
+                                    </h3>
+                                    <div v-if="!model.questions.length" class="text-center text-gray-600">
+                                        No data
+                                    </div>
+                                    <div v-else v-for="(question, index) in model.questions" :key="question.id">
+                                        <QuestionEdit
+                                        :question="question"
+                                        :index="index"
+                                        @change="questionChange"
+                                        @addQuestion="addQuestion"
+                                        @deleteQuestion="deleteQuestion"
+                                        >
+
+                                        </QuestionEdit>
                                     </div>
                                 </div>
                             </div>
@@ -78,6 +116,7 @@
 
 <script setup>
 import PageComponent from "../components/PageComponent.vue";
+import QuestionEdit from "../components/edit/QuestionEdit.vue";
 import {ref} from "vue";
 import {useRoute} from "vue-router";
 import store from "../store";

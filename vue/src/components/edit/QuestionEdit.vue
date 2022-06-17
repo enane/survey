@@ -1,7 +1,7 @@
 <template>
     <div class="flex items-center justify-between">
         <h3 class="text-lg font-bold">
-            {{ index + 1 }}. {{ model.question }}
+            {{ index + 1 }}. {{ questionData.question }}
         </h3>
         <div class="flex items-center">
             <button
@@ -31,11 +31,11 @@
     </div>
     <div class="grid gap-3 grid-cols-12">
         <div class="mt-3 col-span-9">
-            <label :for="'question_text_'+model.data">Text</label>
+            <label :for="'question_text_'+questionData.data">Text</label>
             <input
                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                type="text" :name="'question_text_'+model.data" v-model="model.question" @change="dataChange"
-                :id="'question_text_'+model.data">
+                type="text" :name="'question_text_'+questionData.data" v-model="questionData.question" @change="dataChange"
+                :id="'question_text_'+questionData.data">
         </div>
         <div class="mt-3 col-span-3">
             <label for="question_type" class="block text-sm font-medium text-gray-700">
@@ -44,7 +44,7 @@
             <select
                 id="question_type"
                 name="question_type"
-                v-model="model.type"
+                v-model="questionData.type"
                 @change="typeChange"
                 class="mt-1 h-9 block w-full py-2 px-2 border border-gray-300 bg-white roundend-md shadow-sm sm:text-sm"
             >
@@ -59,15 +59,15 @@
 
     <div class="mt-3 col-span-9">
         <label
-            :for="'question_description_'+model.id"
+            :for="'question_description_'+questionData.id"
             class="block text-sm font-medium text-gray-800">
             Description
         </label>
         <textarea
-            :name="'question_description_'+model.id"
-            v-model="model.description"
+            :name="'question_description_'+questionData.id"
+            v-model="questionData.description"
             @change="dataChange"
-            :id="'question_description_'+model.id"
+            :id="'question_description_'+questionData.id"
             class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm mt-1 w-full shadow-sm sm:text-sm"
         >
 
@@ -83,7 +83,7 @@
             </button>
         </h4>
         <div
-            v-if="!model.data.options.length"
+            v-if="!questionData.data.options.length"
             class="text-xs text-gray-700 text-center py-3">
             No options
         </div>
@@ -136,8 +136,18 @@ import {v4 as uuidv4} from "uuid";
 
 const emit = defineEmits(["change", "addQuestion", "deleteQuestion"]);
 
+
+const props = defineProps({
+    question: Object,
+    index: Number
+})
+
+const questionData = ref({ ...props.question });
+
+const questionTypes = computed(() => store.state.questionTypes);
+
 function shouldHaveOptions() {
-    return ['select', 'radio', 'checkbox'].includes(model.value.type);
+    return ['select', 'radio', 'checkbox'].includes(questionData.value.type);
 }
 
 function getOptions() {
@@ -167,32 +177,23 @@ function typeChange() {
 }
 
 function dataChange() {
-    const data = JSON.parse(JSON.stringify(model.value));
+    const data = JSON.parse(JSON.stringify(questionData.value));
     if (!shouldHaveOptions()) {
         delete data.data.options;
     }
     emit("change", data)
 }
 
-const props = defineProps({
-    question: Object,
-    index: Number
-})
-
 function deleteQuestion(){
-    emit("deleteQuestion", props.index+1)
+    emit("deleteQuestion", props.question)
 }
 
 function addQuestion(){
-    emit("addQuestion", props.question)
+    emit("addQuestion", props.index+1)
 }
 
 const model = ref(JSON.parse(JSON.stringify(props.question)));
 
-const questionData = ref(JSON.parse(JSON.stringify(props.question)));
-
-
-const questionTypes = computed(() => store.state.questionTypes);
 </script>
 
 <style scoped>

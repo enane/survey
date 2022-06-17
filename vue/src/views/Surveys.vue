@@ -44,7 +44,7 @@
                         </button>
                     </div>
                 </div>
-                <img :src="survey.image" class="w-full object-cover max-h-80">
+<!--                <img :src="survey.image" class="w-full object-cover max-h-80">-->
                 <div class="border-t border-gray-200">
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -79,10 +79,18 @@ import store from "../store";
 import {computed} from "vue";
 
 const surveys = computed(() => store.state.surveys);
+console.log(surveys);
 
-function deleteSurvey(survey){
-    if (confirm('Are you sure you want to delete this survey?')){
+store.dispatch("getSurveys");
 
+function deleteSurvey(survey) {
+    if (
+        confirm(
+            `Are you sure you want to delete this survey? Operation can't be undone!!`
+        )
+    ) {
+        store.dispatch("deleteSurvey", survey.id)
     }
+    store.dispatch("getSurveys");
 }
 </script>

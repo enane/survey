@@ -5,9 +5,12 @@
                 <h1 class="text-3xl font-bold text-gray-900">
                     {{ surveyData.id ? surveyData.title : 'Create New Survey' }}
                 </h1>
+                <button @click="deleteSurvey()"
+                        class="text-l py-1 px-4 bg-red-700 text-white rounded-md hover:bg-red-600">
+                    Delete
+                </button>
             </div>
         </template>
-
         <div>
             <div class="md:grid md:grid-cols-3 md:gap-6">
                 <div class="md:col-span-1">
@@ -19,7 +22,7 @@
                     </div>
                 </div>
                 <div class="mt-5 md:mt-0 md:col-span-2">
-                    <form @submit.prevent="storeSurvey">
+                    <form @submit.prevent="saveSurvey">
                         <div class="shadow sm:rounded-md sm:overflow-hidden">
                             <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
                                 <div>
@@ -41,24 +44,24 @@
                                                placeholder="Expire date"/>
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700"> Photo </label>
-                                    <div class="mt-1 flex items-center">
+                                <!--                                <div>-->
+                                <!--                                    <label class="block text-sm font-medium text-gray-700"> Photo </label>-->
+                                <!--                                    <div class="mt-1 flex items-center">-->
 
-                                        <span class="inline-block w-25 rounded-md overflow-hidden bg-gray-100">
-                                        <img v-if="surveyData.image"
-                                             :src="surveyData.image"
-                                             :alt="surveyData.title">
-                                          <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                              <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                            </svg>
-                                        </span>
-                                        <input type="file" class="mx-3"/>
+                                <!--                                        <span class="inline-block w-25 rounded-md overflow-hidden bg-gray-100">-->
+                                <!--                                        <img v-if="surveyData.image"-->
+                                <!--                                             :src="surveyData.image"-->
+                                <!--                                             :alt="surveyData.title">-->
+                                <!--                                          <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"-->
+                                <!--                                               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">-->
+                                <!--                                              <path stroke-linecap="round" stroke-linejoin="round"-->
+                                <!--                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>-->
+                                <!--                                            </svg>-->
+                                <!--                                        </span>-->
+                                <!--                                        <input type="file" class="mx-3"/>-->
 
-                                    </div>
-                                </div>
+                                <!--                                    </div>-->
+                                <!--                                </div>-->
                                 <div>
                                     <label for="about" class="block text-sm font-medium text-gray-700"> About </label>
                                     <div class="mt-1">
@@ -79,19 +82,22 @@
                                 </div>
                                 <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
                                     <h3 class="text-2xl flex items-center justify-between">Questions
-                                    <button type="button" class="text-sm bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-800" @click="addQuestion()">
-                                        + Add Question
-                                    </button>
+                                        <button type="button"
+                                                class="text-sm bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-800"
+                                                @click="addQuestion()">
+                                            + Add Question
+                                        </button>
                                     </h3>
                                     <div v-if="!surveyData.questions.length" class="text-center text-gray-600">
                                         No data
                                     </div>
                                     <div v-else v-for="(question, index) in surveyData.questions" :key="question.id">
                                         <QuestionEdit
-                                        :question="question"
-                                        :index="index"
-                                        @addQuestion="addQuestion"
-                                        @deleteQuestion="deleteQuestion"
+                                            :question="question"
+                                            :index="index"
+                                            @change="questionChange"
+                                            @addQuestion="addQuestion"
+                                            @deleteQuestion="deleteQuestion"
                                         >
 
                                         </QuestionEdit>
@@ -112,25 +118,73 @@
 
     </PageComponent>
 </template>
-
 <script setup>
 import PageComponent from "../components/PageComponent.vue";
 import QuestionEdit from "../components/edit/QuestionEdit.vue";
-import {ref, computed} from "vue";
-import {useRoute} from "vue-router";
+import {ref, computed, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
 import store from "../store";
 import {v4 as uuidv4} from "uuid";
+import Swal from "laravel-mix/src/Dispatcher";
+
 const model = []
+
+const router = useRouter();
 const route = useRoute();
 
-const survey = computed(() =>
-    store.state.surveys.find((s) => s.id === parseInt(route.params.id))
+// let surveyData;
+// if (route.params.id) {
+//     const survey = computed(() =>
+//         store.state.surveys.find((s) => s.id === parseInt(route.params.id))
+//     );
+//     surveyData = ref({
+//         ...survey.value,
+//         status: survey.value.status !== "draft",
+//     });
+// } else {
+//     surveyData = ref({
+//         title: "",
+//         status: false,
+//         description: null,
+//         image: null,
+//         expire_date: null,
+//         questions: [],
+//     })
+// }
+
+let surveyData = ref({
+    title: "",
+    status: false,
+    description: null,
+    image: null,
+    expire_date: null,
+    questions: [],
+});
+
+watch(
+    () => store.state.currentSurvey.data,
+    (newVal, oldVal) => {
+        surveyData.value = {
+            ...JSON.parse(JSON.stringify(newVal)),
+            status: newVal.status !== "draft",
+        };
+    }
 );
 
-const surveyData = ref({
-    ...survey.value,
-    status: survey.value.status !== 'draft'
-});
+if (route.params.id) {
+    store.dispatch("getSurvey", route.params.id);
+}
+function questionChange(question) {
+    if (question.data.options) {
+        question.data.options = [...question.data.options];
+    }
+    surveyData.value.questions = surveyData.value.questions.map((q) => {
+        if (q.id === question.id) {
+            return JSON.parse(JSON.stringify(question));
+        }
+        return q;
+    });
+}
 
 function addQuestion(index) {
     const newQuestion = {
@@ -142,15 +196,56 @@ function addQuestion(index) {
     };
     surveyData.value.questions.splice(index, 0, newQuestion);
 }
+
 function deleteQuestion(question) {
     surveyData.value.questions = surveyData.value.questions.filter((q) => q !== question);
 }
 
 if (route.params.id) {
-    model.value = store.state.surveys.find(
+    surveyData.value = store.state.surveys.find(
         (s) => s.id === parseInt(route.params.id)
     );
 }
+
+function saveSurvey() {
+    console.log(surveyData.value);
+    store.dispatch("saveSurvey", surveyData.value).then(() => {
+        router.push({
+            name: "Surveys",
+            // params: { id: data.data.id },
+        });
+
+    });
+}
+
+function deleteSurvey() {
+    if (confirm(`Are you sure you want to delete this survey? Operation can't be undone!!`)) {
+        store.dispatch("deleteSurvey", surveyData.value.id).then(() => {
+            router.push({
+                name: "Surveys",
+            });
+        });
+    }
+}
+
+// function saveSurvey() {
+//     let action = "created";
+//     if (surveyData.value.id) {
+//         action = "updated";
+//     }
+//     store.dispatch("saveSurvey", { ...surveyData.value }).then(({ data }) => {
+//         store.commit("notify", {
+//             type: "success",
+//             message: "The survey was successfully " + action,
+//         });
+//         router.push({
+//             name: "SurveyView",
+//             params: { id: data.data.id },
+//         });
+//     });
+// }
+
+
 </script>
 
 <style scoped>
